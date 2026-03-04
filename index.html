@@ -684,9 +684,10 @@
             try {
                 const translated = await translate(prompt);
                 
-                // تشفير الطلب
-                const ep = atob('aHR0cDovL2VsbW55YXdlLmRwZG5zLm9yZzozMDMwMS9nZW4=');
-                const url = `${ep}?p=${encodeURIComponent(translated)}`;
+                // استخدام CORS Proxy للتوافق مع HTTPS
+                const apiUrl = 'http://elmnyawe.dpdns.org:30301/gen';
+                const proxy = 'https://corsproxy.io/?';
+                const url = `${proxy}${encodeURIComponent(`${apiUrl}?p=${encodeURIComponent(translated)}`)}`;
                 
                 const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
                 const d = await r.json();
