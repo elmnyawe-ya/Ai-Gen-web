@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="AI Image Pro - حوّل خيالك إلى صورة بلمسة واحدة">
+    <meta name="author" content="ELMINYAWE">
+    <title>AI Image Pro | ELMINYAWE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        :root {
+            --primary: #dc2626;
+            --success: #22c55e;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --dark-bg: #000000;
+            --dark-card: #0a0a0a;
+            --dark-surface: #111111;
+            --dark-text: #ffffff;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Poppins', sans-serif;
+            background: var(--light);
+            color: #1e293b;
+            margin: 0;
+            padding-bottom: 160px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        body.dark-mode { 
+            background: var(--dark-bg); 
+            color: var(--dark-text); 
+        }
+        body.en { direction: ltr; font-family: 'Poppins', sans-serif; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #000 0%, #1a0a0a 50%, #dc2626 100%);
+            color: white;
+            padding: 50px 20px 40px;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+            font-size: 1.8rem;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .controls-top {
+            position: absolute;
+            top: 15px;
+            width: calc(100% - 40px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: rgba(220, 38, 38, 0.3);
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover { 
+            background: rgba(220, 38, 38, 0.5); 
+            transform: scale(1.05);
+        }
+
+        /* Container */
+        .container { 
+            padding: 20px; 
+            max-width: 600px; 
+            margin: auto; 
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        body.dark-mode .card { 
+            background: var(--dark-card); 
+            border: 1px solid #1f1f1f;
+        }
+
+        /* Form */
+        .label { 
+            display: block; 
+            margin-bottom: 10px; 
+            font-weight: 700;
+            color: var(--primary); 
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            outline: none;
+            resize: none;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .input-field { 
+            background: var(--dark-surface); 
+            border-color: #1f1f1f; 
+            color: white; 
+        }
+
+        .input-field:focus { 
+            border-color: var(--primary); 
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #000 0%, #dc2626 100%);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        .btn-success { 
+            background: linear-gradient(135deg, #000 0%, #22c55e 100%); 
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #1f1f1f 0%, #dc2626 100%);
+            padding: 10px 15px;
+            font-size: 0.85rem;
+        }
+
+        /* Result */
+        .result-img-wrapper { 
+            border-radius: 15px; 
+            overflow: hidden; 
+            margin-bottom: 15px; 
+            border: 3px solid var(--primary); 
+        }
+
+        .result-image { width: 100%; display: block; }
+
+        /* History */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-header h3 { margin: 0; font-size: 1.1rem; }
+
+        .history-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+        }
+
+        .history-item { 
+            position: relative; 
+            border-radius: 10px; 
+            overflow: hidden; 
+            aspect-ratio: 1/1; 
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover { border-color: var(--primary); }
+
+        .history-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-item-date {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 15px 5px 5px;
+            font-size: 0.6rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state i { font-size: 3rem; opacity: 0.3; color: var(--primary); }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: #000;
+            height: 70px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -5px 20px rgba(220, 38, 38, 0.2);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #525252;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 10px 30px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); background: rgba(220, 38, 38, 0.1); }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #000 0%, #1a0a0a 100%);
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #1f1f1f;
+            z-index: 99;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .footer-name {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .discord-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(88, 101, 242, 0.2);
+            color: #5865F2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .discord-link:hover {
+            background: rgba(88, 101, 242, 0.3);
+        }
+
+        /* Loader */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .spinner { 
+            width: 50px;
+            height: 50px;
+            border: 4px solid #1f1f1f;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loader-text {
+            margin-top: 20px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #dc2626;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #22c55e; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .history-grid { grid-template-columns: repeat(2, 1fr); }
+            .header { padding: 45px 15px 35px; }
+            .header h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="controls-top">
+            <button class="icon-btn" id="theme-btn"><i class="fas fa-moon"></i></button>
+            <button class="icon-btn" id="lang-btn" style="width: auto; padding: 0 12px; font-weight: bold;">EN</button>
+        </div>
+        <h1><i class="fas fa-wand-magic-sparkles"></i> AI Image Pro</h1>
+        <p id="subtitle">حوّل خيالك إلى حقيقة</p>
+    </header>
+
+    <div class="container">
+        
+        <div id="tab-create" class="tab-content active">
+            <div class="card">
+                <label class="label" id="lbl-prompt">وصف الصورة</label>
+                <textarea id="prompt" class="input-field" rows="3" placeholder="مثال: قطة لطيفة في الفضاء..."></textarea>
+                <button id="generate-btn" class="btn">
+                    <i class="fas fa-magic"></i> <span id="btn-gen">إنشاء الصورة</span>
+                </button>
+            </div>
+
+            <div id="result-box" class="card" style="display: none;">
+                <div class="result-img-wrapper">
+                    <img id="result-img" class="result-image" src="" alt="Result">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn btn-success" onclick="downloadImg()"><i class="fas fa-download"></i> <span id="btn-save">حفظ</span></button>
+                    <button class="btn" style="background: linear-gradient(135deg, #1f1f1f, #3f3f3f);" onclick="shareImg()"><i class="fas fa-share"></i> <span id="btn-share">مشاركة</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <div class="history-header">
+                    <h3><i class="fas fa-history" style="color: var(--primary);"></i> <span id="txt-history">معرض صورك</span></h3>
+                    <button class="btn btn-danger" onclick="clearHistory()"><i class="fas fa-trash"></i> <span id="btn-clear">مسح</span></button>
+                </div>
+                <div id="history-empty" class="empty-state">
+                    <i class="fas fa-images"></i>
+                    <p id="txt-empty">لا توجد صور</p>
+                </div>
+                <div id="history-grid" class="history-grid"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-item active" onclick="switchTab('tab-create', this)">
+            <i class="fas fa-paint-brush"></i><span id="nav-create">إنشاء</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('tab-history', this)">
+            <i class="fas fa-layer-group"></i><span id="nav-history">السجل</span>
+        </div>
+    </nav>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-text">Made with ❤️ by</span>
+            <span class="footer-name">ELMINYAWE</span>
+            <a href="https://discord.com/users/.y31" target="_blank" class="discord-link">
+                <i class="fab fa-discord"></i> .y31
+            </a>
+        </div>
+    </footer>
+
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+        <p class="loader-text" id="txt-loading">جاري الإنشاء...</p>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        // === إعدادات ===
+        const MAX_IMAGES = 6;
+        const MAX_DAYS = 2;
+        const KEY = 'ai_h';
+        
+        // === حماية ===
+        let requestCount = 0;
+        let lastRequest = 0;
+        const RATE_LIMIT = 10000; // 10 ثواني بين الطلبات
+        
+        // تعطيل DevTools
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
+        
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // إخفاء console
+        const _log = console.log;
+        console.log = () => {};
+        console.info = () => {};
+        console.warn = () => {};
+        
+        // === متغيرات ===
+        let history = [];
+        let lang = localStorage.getItem('lang') || 'ar';
+        
+        // === النصوص ===
+        const t = {
+            ar: {
+                subtitle: 'حوّل خيالك إلى حقيقة',
+                prompt: 'وصف الصورة',
+                generate: 'إنشاء الصورة',
+                save: 'حفظ',
+                share: 'مشاركة',
+                history: 'معرض صورك',
+                clear: 'مسح',
+                empty: 'لا توجد صور',
+                create: 'إنشاء',
+                navHistory: 'السجل',
+                loading: 'جاري الإنشاء...',
+                errorEmpty: 'اكتب وصفاً للصورة',
+                errorLimit: 'انتظر قليلاً قبل المحاولة مجدداً',
+                errorServer: 'خطأ في الاتصال',
+                success: 'تم الحفظ!',
+                downloaded: 'تم تحميل الصورة!',
+                copied: 'تم نسخ الرابط!',
+                confirm: 'حذف كل الصور؟'
+            },
+            en: {
+                subtitle: 'Turn imagination into reality',
+                prompt: 'Image Description',
+                generate: 'Generate Image',
+                save: 'Save',
+                share: 'Share',
+                history: 'My Gallery',
+                clear: 'Clear',
+                empty: 'No images',
+                create: 'Create',
+                navHistory: 'History',
+                loading: 'Creating...',
+                errorEmpty: 'Enter image description',
+                errorLimit: 'Please wait before trying again',
+                errorServer: 'Connection error',
+                success: 'Saved!',
+                downloaded: 'Image downloaded!',
+                copied: 'Link copied!',
+                confirm: 'Delete all images?'
+            }
+        };
+        
+        // === دوال ===
+        function $(id) { return document.getElementById(id); }
+        
+        function toast(msg, type = 'error') {
+            const el = $('toast');
+            el.textContent = msg;
+            el.className = 'toast ' + type + ' show';
+            setTimeout(() => el.classList.remove('show'), 2500);
+        }
+        
+        function timeAgo(ts) {
+            const h = Math.floor((Date.now() - ts) / 3600000);
+            const d = Math.floor(h / 24);
+            if (lang === 'ar') {
+                return d > 0 ? `منذ ${d} يوم` : h > 0 ? `منذ ${h} ساعة` : 'الآن';
+            }
+            return d > 0 ? `${d}d ago` : h > 0 ? `${h}h ago` : 'Just now';
+        }
+        
+        function loadHistory() {
+            try {
+                history = JSON.parse(localStorage.getItem(KEY) || '[]');
+                cleanHistory();
+            } catch { history = []; }
+        }
+        
+        function saveHistory() {
+            localStorage.setItem(KEY, JSON.stringify(history));
+        }
+        
+        function cleanHistory() {
+            const maxAge = MAX_DAYS * 86400000;
+            history = history.filter(i => Date.now() - i.ts < maxAge).slice(0, MAX_IMAGES);
+            saveHistory();
+        }
+        
+        function addHistory(url) {
+            if (history.length >= MAX_IMAGES) history.pop();
+            history.unshift({ id: Date.now(), url, ts: Date.now() });
+            saveHistory();
+            toast(t[lang].success, 'success');
+        }
+        
+        function renderHistory() {
+            cleanHistory();
+            const grid = $('history-grid');
+            const empty = $('history-empty');
+            
+            if (!history.length) {
+                empty.style.display = 'block';
+                grid.innerHTML = '';
+                return;
+            }
+            
+            empty.style.display = 'none';
+            grid.innerHTML = history.map(i => `
+                <div class="history-item" onclick="viewImg('${i.url}')">
+                    <img src="${i.url}" loading="lazy">
+                    <button class="delete-btn" onclick="event.stopPropagation(); delHistory(${i.id})">×</button>
+                    <div class="history-item-date">${timeAgo(i.ts)}</div>
+                </div>
+            `).join('');
+        }
+        
+        window.delHistory = function(id) {
+            history = history.filter(i => i.id !== id);
+            saveHistory();
+            renderHistory();
+        };
+        
+        window.clearHistory = function() {
+            if (confirm(t[lang].confirm)) {
+                history = [];
+                saveHistory();
+                renderHistory();
+            }
+        };
+        
+        window.viewImg = function(url) {
+            $('result-img').src = url;
+            $('result-box').style.display = 'block';
+            switchTab('tab-create', document.querySelector('.nav-item'));
+        };
+        
+        function updateLang() {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('en', lang === 'en');
+            $('lang-btn').textContent = lang === 'ar' ? 'EN' : 'عربي';
+            
+            const l = t[lang];
+            $('subtitle').textContent = l.subtitle;
+            $('lbl-prompt').textContent = l.prompt;
+            $('btn-gen').textContent = l.generate;
+            $('btn-save').textContent = l.save;
+            $('btn-share').textContent = l.share;
+            $('txt-history').textContent = l.history;
+            $('btn-clear').textContent = l.clear;
+            $('txt-empty').textContent = l.empty;
+            $('nav-create').textContent = l.create;
+            $('nav-history').textContent = l.navHistory;
+            $('txt-loading').textContent = l.loading;
+        }
+        
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            $(id).classList.add('active');
+            el.classList.add('active');
+            if (id === 'tab-history') renderHistory();
+        }
+        window.switchTab = switchTab;
+        
+        // === API ===
+        async function translate(text) {
+            try {
+                const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(text)}`);
+                const d = await r.json();
+                return d[0]?.[0]?.[0] || text;
+            } catch { return text; }
+        }
+        
+        async function generate() {
+            const prompt = $('prompt').value.trim();
+            if (!prompt) return toast(t[lang].errorEmpty);
+            
+            // Rate limiting
+            const now = Date.now();
+            if (now - lastRequest < RATE_LIMIT) {
+                return toast(t[lang].errorLimit);
+            }
+            lastRequest = now;
+            
+            $('generate-btn').disabled = true;
+            $('loader').style.display = 'flex';
+            
+            try {
+                const translated = await translate(prompt);
+                
+                // تشفير الطلب
+                const ep = atob('aHR0cDovL2VsbW55YXdlLmRwZG5zLm9yZzozMDMwMS9nZW4=');
+                const url = `${ep}?p=${encodeURIComponent(translated)}`;
+                
+                const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const d = await r.json();
+                
+                if (d.status === 'success' && d.image_url) {
+                    $('result-img').src = d.image_url;
+                    $('result-img').onload = () => {
+                        $('loader').style.display = 'none';
+                        $('result-box').style.display = 'block';
+                        $('generate-btn').disabled = false;
+                        addHistory(d.image_url);
+                    };
+                } else {
+                    throw new Error('Failed');
+                }
+            } catch (e) {
+                $('loader').style.display = 'none';
+                $('generate-btn').disabled = false;
+                toast(t[lang].errorServer);
+            }
+        }
+        
+        async function downloadImg() {
+            const url = $('result-img').src;
+            try {
+                const r = await fetch(url);
+                const blob = await r.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `ELMINYAWE_${Date.now()}.webp`;
+                a.click();
+                URL.revokeObjectURL(a.href);
+                toast(t[lang].downloaded, 'success');
+            } catch {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ELMINYAWE_${Date.now()}.webp`;
+                a.click();
+            }
+        }
+        window.downloadImg = downloadImg;
+        
+        function shareImg() {
+            const url = $('result-img').src;
+            if (navigator.share) {
+                navigator.share({ title: 'ELMINYAWE AI', url });
+            } else {
+                navigator.clipboard.writeText(url);
+                toast(t[lang].copied, 'success');
+            }
+        }
+        window.shareImg = shareImg;
+        
+        // === الأحداث ===
+        $('generate-btn').addEventListener('click', generate);
+        
+        $('prompt').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                generate();
+            }
+        });
+        
+        $('lang-btn').addEventListener('click', () => {
+            lang = lang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('lang', lang);
+            updateLang();
+            renderHistory();
+        });
+        
+        $('theme-btn').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const dark = document.body.classList.contains('dark-mode');
+            $('theme-btn').innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+        });
+        
+        // === تهيئة ===
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            $('theme-btn').innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        loadHistory();
+        updateLang();
+    })();
+    </script>
+</body>
+</html>
